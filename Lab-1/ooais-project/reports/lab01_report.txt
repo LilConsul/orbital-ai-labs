@@ -1,0 +1,27 @@
+Description of dataset structure:
+> The data contains 4 columns:
+
+timestamp, object_id, temperature, velocity
+
+After removing cleaning-up the data we have 4 rows of data. Example:
+
+2026-03-01T12:05:00,OBJ-002,14.9,7.2
+2026-03-01T12:10:00,OBJ-003,15.1,7.5
+2026-03-01T12:15:00,OBJ-001,15.4,7.6
+
+
+Identification of observed objects:
+> We have temperature and velocity data for 3 different objects (OBJ-001,... ,OBJ-004)
+
+
+Summary of detected data issues:
+> Data contained 1 row with INVALID data in temperature column
+
+
+Description of cleaning steps && explanation of data flow from raw to processed dataset:
+> To process data row with INVALID data was removed 
+
+
+
+Explanation of the role of the ingestion layer:
+> The layer showed us which objects are we dealing with
