@@ -25,3 +25,27 @@ Description of cleaning steps && explanation of data flow from raw to processed 
 
 Explanation of the role of the ingestion layer:
 > The layer showed us which objects are we dealing with
+
+
+Project structure:
+ data   reports  󰣞 src
+
+./data:
+ processed   raw
+
+./data/processed:
+ final.csv   observations_clean.csv   tmp.csv
+
+./data/raw:
+ observations.csv
+
+./reports:
+ lab01_report.txt
+
+./src:
+ ingestion
+
+./src/ingestion:
+ load_data.py
+
+Repository for the labs as is follows: https://github.com/LilConsul/orbital-ai-labs.git
