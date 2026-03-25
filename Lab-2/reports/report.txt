@@ -91,3 +91,16 @@ P2: grep -Ff (tail -n +2 data/raw/orbital_observations.csv | cut -d, -f2 | tr -d
 P3: tail -n +2 data/raw/orbital_observations.csv | awk -F, 'NR==1 {print; next} ($3 > 50 && $4 < 20)' | sort | wc -l
 
 31 - Amount of this records, remove wc -l to display them 
+
+
+P4:cat data/raw/orbital_observations.csv | awk -F, 'NR==1 {print; next} $7 != "OK" && $8 == "0"'
+
+Note: I decided to print header of the csv data as well. 
+    
+timestamp,object_id,temperature,velocity,altitude,signal_strength,sensor_status,anomaly_flag
+,OBJ-69,420.52,123,123,123,PERFECT,0
+
+
+P5:cat data/raw/orbital_observations.csv | cut -d, -f3,4,5,6 | grep -v INVALID > data/processed/model_input.csv
+
+GitHub Link: https://github.com/LilConsul/orbital-ai-labs.git
