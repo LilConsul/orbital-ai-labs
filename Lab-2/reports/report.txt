@@ -1,0 +1,93 @@
+The data contains measurments for objects, and their amount as follows:
+    {
+     90 OBJ-001
+     97 OBJ-002
+    100 OBJ-003
+    113 OBJ-004
+    100 OBJ-005
+    }
+
+
+`tail -n +2 data/raw/orbital_observations.csv | cut -d, -f2 | sort | uniq -c`
+ 
+
+Amount of INVALID lines are: 30
+
+`grep INVALID data/raw/orbital_observations.csv | wc -l`
+
+
+INVALID lines are occured on lines: 
+
+{84,90,140,145,156,163,169,178,253,256,261,269,280,282,319,320,340,368,372,373,400,401,410,444,454,458,480,487,493,501} 
+
+`nl data/raw/orbital_observations.csv | grep INVALID | cut -d\t -f1 | xargs | tr ' ' ', '`
+
+
+Min value for temperature column is: 14.0
+
+`cat data/raw/orbital_observations.csv | grep -v INVALID | cut -d, -f3 | sort -n | head`
+
+Max value for temperature column is: 20.50841799679463
+
+`cat data/raw/orbital_observations.csv | grep -v INVALID | cut -d, -f3 | sort -nr | head`
+
+Also cleaned data by removing INVALID lines:
+`cat data/raw/orbital_observations.csv | grep -v INVALID > data/clean/orbital_observations.csv`
+
+There is also pieces of data, when sensor had problems, hence the data can be incorrect in this lines:
+
+2026-03-01 12:10:00,OBJ-001,16.29,7.03,451,0.5061892083657298,DEGRADED,0
+2026-03-01 12:40:00,OBJ-001,14.5,7.8,497,0.5639619172711572,DEGRADED,0
+2026-03-01 13:25:00,OBJ-004,14.15,7.7,403,0.6892904162953539,DEGRADED,0
+2026-03-01 15:10:00,OBJ-003,15.93,7.74,440,0.6257392221707015,DEGRADED,0
+2026-03-01 15:50:00,OBJ-004,15.53,7.15,439,0.6708160805828866,DEGRADED,0
+2026-03-01 16:50:00,OBJ-005,16.46,7.78,548,0.4175336278874348,DEGRADED,0
+2026-03-01 17:15:00,OBJ-002,15.48,7.76,571,0.30241777776674933,DEGRADED,0
+2026-03-01 17:25:00,OBJ-002,15.57,7.99,512,0.23303451887815402,DEGRADED,0
+2026-03-01 17:30:00,OBJ-001,14.76,7.34,415,0.4805073944749245,DEGRADED,0
+2026-03-01 17:45:00,OBJ-002,18.28077696635233,7.08,414,0.5595405810088898,DEGRADED,1
+
+
+`cat data/clean/orbital_observations.csv | grep DEGRADED | head`
+
+
+The column anomaly_flag exists, the number of occurances of numbers '0' and '1' are:
+413 0
+ 57 1
+This means, that anomalies where detected 57 times.
+
+`tail -n +2 data/clean/orbital_observations.csv | cut -d, -f8 | sort -n | uniq -c`
+
+
+Metadata observations:
+    Determine amount of lines `tail -n +2 data/raw/orbital_observations.csv | wc -l`
+    Find feature columns: `head data/raw/orbital_observations.csv`
+    Observe amount of INVALID lines: `grep INVALID data/raw/orbital_observations.csv | wc -l`
+    
+    
+## Practise Tasks
+
+P1: grep -Ff (tail -n +2 data/raw/orbital_observations.csv | cut -d, -f2 | sort | uniq -u | psub) data/raw/orbital_observations.csv
+
+OBJ-69,420.52,123,123,123,PERFECT,0
+
+Note: I was using Kitty terminal, in bash enviroments we should use <(...) instead of (...| psub) 
+
+
+P2: grep -Ff (tail -n +2 data/raw/orbital_observations.csv | cut -d, -f2 | tr -d '\r' | sort | uniq -c | sort -nr | head -n1 | awk '{print $2}' | psub) data/raw/orbital_observations.csv | sort | head
+
+2026-03-01 12:25:00,OBJ-004,14.99,7.9,522,1.0,OK,0
+2026-03-01 13:15:00,OBJ-004,14.63,7.05,436,0.72,OK,0
+2026-03-01 13:25:00,OBJ-004,14.15,7.7,403,0.6892904162953539,DEGRADED,0
+2026-03-01 13:55:00,OBJ-004,16.41227277628497,7.61,545,0.9,OK,1
+2026-03-01 14:05:00,OBJ-004,16.3,7.39,503,0.95,OK,0
+2026-03-01 14:25:00,OBJ-004,14.41,7.99,552,0.92,OK,0
+2026-03-01 14:30:00,OBJ-004,16.2,7.43,462,0.81,OK,0
+2026-03-01 14:40:00,OBJ-004,16.15,7.78,554,0.71,OK,0
+2026-03-01 15:05:00,OBJ-004,16.44,7.87,503,0.86,OK,0
+2026-03-01 15:25:00,OBJ-004,15.56,7.34,502,0.78,OK,0
+
+
+P3: tail -n +2 data/raw/orbital_observations.csv | awk -F, 'NR==1 {print; next} ($3 > 50 && $4 < 20)' | sort | wc -l
+
+31 - Amount of this records, remove wc -l to display them 

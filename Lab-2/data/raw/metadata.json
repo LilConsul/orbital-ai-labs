@@ -1,0 +1,24 @@
+{
+"dataset_name": "orbital_observations",
+"num_records": 500,
+"columns": [
+    "timestamp",
+    "object_id",
+    "temperature",
+    "velocity",
+    "altitude",
+    "signal_strength",
+    "sensor_status",
+    "anomaly_flag"
+],
+"feature_columns": [
+    "temperature",
+    "velocity",
+    "altitude",
+    "signal_strength",
+    "sensor_status",
+    "anomaly_flag"
+],
+"target_column": "<target>",
+"invalid_records": 30
+}
