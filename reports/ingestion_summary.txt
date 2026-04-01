@@ -5,7 +5,7 @@ Columns: ['timestamp', 'object_id', 'temperature', 'velocity', 'altitude', 'sign
 Record count: MISMATCH
 Expected: 100
 Actual:   500  
-Valid records: 470
+Valid records: 421
 Valid records sample (first 3 lines):
 [
   {
@@ -29,19 +29,19 @@ Valid records sample (first 3 lines):
     "anomaly_flag": "0"
   },
   {
-    "timestamp": "2026-03-01 12:10:00",
+    "timestamp": "2026-03-01 12:15:00",
     "object_id": "OBJ-001",
-    "temperature": "16.29",
-    "velocity": "7.03",
-    "altitude": "451",
-    "signal_strength": "0.5061892083657298",
-    "sensor_status": "DEGRADED",
+    "temperature": "15.71",
+    "velocity": "7.88",
+    "altitude": "577",
+    "signal_strength": "0.87",
+    "sensor_status": "OK",
     "anomaly_flag": "0"
   }
 ]
-Invalid records: 30
-File written: /home/consul/Documents/orbital-ai-labs/Lab-3/data/processed/valid_observations.csv (470 records)
-File written: /home/consul/Documents/orbital-ai-labs/Lab-3/data/processed/invalid_observations.csv (30 records)
+Invalid records: 79
+File written: /home/consul/Documents/orbital-ai-labs/Lab-3/data/processed/valid_observations.csv (421 records)
+File written: /home/consul/Documents/orbital-ai-labs/Lab-3/data/processed/invalid_observations.csv (79 records)
 Model input sample (first 3 records):
 [
   {
@@ -57,10 +57,10 @@ Model input sample (first 3 records):
     "signal_strength": "0.84"
   },
   {
-    "temperature": "16.29",
-    "velocity": "7.03",
-    "altitude": "451",
-    "signal_strength": "0.5061892083657298"
+    "temperature": "15.71",
+    "velocity": "7.88",
+    "altitude": "577",
+    "signal_strength": "0.87"
   }
 ]
-File written: /home/consul/Documents/orbital-ai-labs/Lab-3/data/processed/model_input.csv (470 records)
+File written: /home/consul/Documents/orbital-ai-labs/Lab-3/data/processed/model_input.csv (421 records)
