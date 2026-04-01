@@ -50,8 +50,13 @@ valid_records = []
 invalid_records = []
 model_input = []
 
+
 for row in rows:
-    if any("INVALID" in str(value) for value in row.values()):
+    if any(
+        flag in str(value).upper()
+        for value in row.values()
+        for flag in ("INVALID", "DEGRADED")
+    ):
         invalid_records.append(row)
         continue
     valid_records.append(row)
