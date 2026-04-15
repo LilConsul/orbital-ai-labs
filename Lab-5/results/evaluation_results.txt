@@ -1,0 +1,28 @@
+OOAIS Model Evaluation
+========================================
+
+=== Model Evaluation Results ===
+Model name: DecisionTreeClassifier
+Number of training samples: 376
+Number of testing samples: 94
+
+Accuracy: 0.9894
+Confusion matrix:
+[[80  0]
+ [ 1 13]]
+
+=== Tree Representation ===
+Tree depth: 3
+Number of leaves: 4
+Decision Tree Rules:
+|--- temperature <= 0.39
+|   |--- temperature <= 0.37
+|   |   |--- class: 0
+|   |--- temperature >  0.37
+|   |   |--- temperature <= 0.37
+|   |   |   |--- class: 1
+|   |   |--- temperature >  0.37
+|   |   |   |--- class: 0
+|--- temperature >  0.39
+|   |--- class: 1
+

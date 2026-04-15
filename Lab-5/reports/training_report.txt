@@ -1,0 +1,32 @@
+OOAIS Model Training Report
+========================================
+
+Input datasets
+--------------
+data/processed/model_features.csv
+data/processed/model_labels.csv 
+
+Dataset statistics
+------------------
+Number of samples: 470
+Number of features: 7
+
+Model
+-----
+DecisionTreeClassifier
+
+Train/Test split
+----------------
+Training samples: 376
+Test samples: 94
+
+Evaluation summary
+------------------
+Accuracy: 0.9894
+Confusion Matrix:
+[[80  0]
+ [ 1 13]]
+
+GitHub
+------------------
+GitHub Repostiroy Link: https://github.com/LilConsul/orbital-ai-labs.git
