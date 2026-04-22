@@ -1,0 +1,49 @@
+OOAIS Model Playground Summary
+=============================
+
+Input datasets
+--------------
+data/processed/model_features.csv
+data/processed/model_labels.csv
+
+Dataset statistics
+------------------
+Number of samples: 470
+Number of features: 7
+Training samples: 376
+Testing samples: 94
+
+Compared models
+---------------
+- Decision Tree (baseline): 0.9894
+- Random Forest: 0.9894
+- Logistic Regression: 0.9574
+
+Best model
+----------
+Decision Tree (baseline) achieved the highest accuracy: 0.9894
+
+Selected detailed evaluation
+----------------------------
+Model: Decision Tree (baseline)
+Accuracy: 0.9894
+Anomaly class (1) -> precision: 1.0000, recall: 0.9286, f1-score: 0.9630, support: 14
+Confusion matrix:
+[80, 0]
+[1, 13]
+
+Additional experiments
+----------------------
+- Decision Tree (max_depth=2): 0.9894
+- Decision Tree (max_depth=3): 0.9894
+- Decision Tree (max_depth=5): 0.9894
+- Random Forest (n_estimators=5): 0.9894
+- Random Forest (n_estimators=10): 0.9894
+- Random Forest (n_estimators=50): 0.9894
+
+Conclusion
+----------
+The best candidate for further experiments is Decision Tree (baseline),
+because it achieved the highest accuracy on the current test set.
+
+GitHub Link: https://github.com/LilConsul/orbital-ai-labs.git
