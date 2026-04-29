@@ -1,0 +1,47 @@
+– How is an image converted into numbers?
+    1. Converted to RGB,
+    2. Resized to 64 x 64,
+    3. Converted to a NumPy array,
+    4. Scaled to the range [0, 1],
+    5. Flattened into a 1D feature vector.
+
+– What does the model actually “see”?
+    It sees raw pixel intensities arranged as a flat numeric vector.
+    No objects, no shapes, no semantic meaning — just numeric patterns.
+
+– Why can the model classify random or unknown images as one of the known classes?
+    All of them are standard classifiers that always try to assign one of the known labels from training. They do not have an “unknown” or “reject” option.
+    So if you feed them a random image, they will still pick the closest match in feature space.
+
+– Why can this behavior be dangerous in real AI systems?
+    This is dangerous because a system may sound confident even when it has never learned the input it’s seeing. In practice, that can lead to:
+        false positives,
+        unsafe decisions,
+        overtrust by users,
+        poor behavior on out-of-distribution data,
+        failure in real-world edge cases.
+
+– What would need to be improved before using such a system operationally?
+    To use such a system operationally, we would need to:
+        1. Implement an “unknown” class or confidence threshold to reject out-of-distribution inputs.
+        2. Train on a more diverse dataset that includes edge cases and random noise.
+        3. Use techniques like anomaly detection to identify when the model is seeing something it hasn’t learned.
+        4. Continuously monitor and update the model based on real-world performance.
+
+– Which model achieved the highest accuracy?
+    The highest accuracy was achieved by the Random Forest model and the Support Vector Machine (SVM) model, both with an accuracy of 0.889.
+
+– Which model was fastest to train?
+    The fastest model to train was the KNN model, with a training time of <0.01 seconds.
+
+– Did the fastest model also achieve the best accuracy?
+    No, the fastest model (KNN) did not achieve the best accuracy. It had an accuracy of 0.7222, which is lower than the Random Forest and SVM models.
+
+– Did all models classify the same image in the same way?
+    No, not all models classified the same image in the same way.
+
+– What does the accuracy vs training time plot show?
+    More accurate models are not always the slowest to train. For example, the Random Forest and SVM models achieved the highest accuracy but had longer training times compared to Logistic Regression.
+    The plot shows that there is often a trade-off between accuracy and training time, and the best choice depends on the specific requirements of the application.
+
+Repository link: https://github.com/LilConsul/orbital-ai-labs
