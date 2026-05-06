@@ -1,0 +1,85 @@
+CNN VS CLASSICAL ML
+===================
+
+CLASSICAL ML:
+Model: Random Forest
+Training time: 0.18 seconds
+Accuracy: 0.88
+
+CNN:
+Model: Simple CNN
+Training time: 0.79 seconds (8 Epochs)
+Accuracy: 0.9151
+
+BETTER ACCURACY:
+CNN achieves higher accuracy (0.9151) compared to the Random Forest model (0.88).
+This is because CNNs are designed to capture spatial hierarchies in data, making them more effective for image classification tasks.
+
+FASTER TRAINING:
+CLASSICAL ML is faster to train than CNNs, especially for smaller datasets.
+CNNs require more computational resources and time due to their complex architecture and the need for multiple epochs of training.
+
+FEWER CLASS CONFUSIONS:
+CNNs are designed to capture spatial hierarchies in data, making them more effective at distinguishing between classes that may have subtle differences. Classical ML models may struggle with such distinctions unless extensive feature engineering is performed.
+
+GENERALIZATION:
+CNNs are generally better at generalizing to unseen data due to their ability to learn hierarchical features, while classical ML models may struggle with complex patterns and may require more feature engineering to achieve similar performance.
+
+==============
+REPORT QUESTIONS
+
+- What does CNN learn that classical ML may miss? Support your answer with examples from the dataset used in this laboratory.
+CNNs learn spatial hierarchies and patterns in the data, which classical ML models may miss.
+For example, in an image classification task, a CNN can learn to recognize edges, textures, and shapes that are crucial for distinguishing between different classes. In contrast, a Random Forest model may rely on hand-crafted features that may not capture these intricate details, leading to lower accuracy.
+
+- When might classical ML still be preferable?
+Classical ML may still be preferable in scenarios where:
+1. The dataset is small and does not require complex feature extraction.
+2. Computational resources are limited, as classical ML models typically require less training time and computational power
+3. Interpretability is a concern, as classical ML models like Random Forests can provide insights into feature importance, while CNNs are often considered "black boxes."
+
+- When would CNN be the better engineering choice?
+CNN would be the better engineering choice in scenarios where:
+1. The dataset is large and contains complex patterns, such as images or videos, where spatial hierarchies are important for classification.
+2. High accuracy is a priority, and the computational resources are available to train the model effectively
+3. The task involves feature learning, where the model needs to automatically learn relevant features from the data without extensive manual feature engineering.
+
+- Would you deploy CNN in a real orbital observation system? Why?
+Deploying a CNN in a real orbital observation system would depend on several factors, including the specific requirements of the system, the computational resources available, and the need for real-time processing. If the system requires high accuracy in classifying objects or phenomena observed from orbit, and if sufficient computational resources are available, then deploying a CNN could be beneficial.
+
+- Did augmentation improve accuracy?
+Yes, it improved the accuracy of the model significantly. Data augmentation helps to increase the diversity of the training data by applying random transformations such as rotations, flips, and shifts. This can help the model generalize better to unseen data and reduce overfitting, leading to improved accuracy.
+
+Did training become more stable?
+Yes, training became more stable with augmentation. By providing a more diverse set of training examples, augmentation can help the model learn more robust features and reduce the chances of overfitting to the training data. This can lead to a more stable training process and better generalization to new data.
+
+Which classes improved the most?
+The most improved class was "River", which saw a significant increase in accuracy after augmentation. The model stoped confusing "River" with "Residential", comparing about of 45% of the "River" samples were misclassified as "Residential" before augmentation, while after augmentation, this confusion was reduced to about 10%. This improvement can be attributed to the increased diversity in the training data, which allowed the model to learn more distinctive features for the "River" class.
+
+Why can augmentation be useful for satellite imagery?
+Augmentation can be particularly useful for satellite imagery because it helps to increase the diversity of the training data, which can improve the model's ability to generalize to new and unseen data. Satellite images can vary greatly in terms of lighting conditions, angles, and atmospheric conditions, and augmentation can help the model learn to recognize patterns and features across these variations. Additionally, satellite imagery datasets may be limited in size, and augmentation can help to artificially expand the dataset, providing more examples for the model to learn from and improving its performance.
+
+=====
+AFTER RETRAINING WITH 30 EPOCHS vs 8 EPOCHS
+- Did accuracy improve?
+Confidence of the true predictions slighly improved and false noisy predictions confidence decreased. However, the overall accuracy did not show a significant improvement, suggesting that the model may have reached a plateau in learning after 8 epochs. The confusion matrix didnt change at all.
+
+- Did loss continue to decrease?
+Yes, loss continued to decrease, indicating that the model was still learning and improving its predictions. However, the rate of decrease in loss may have slowed down, suggesting that the model was approaching its optimal performance.
+
+- Is more training always better?
+No, more training is not always better. While additional training can help improve the model's performance, it can also lead to overfitting, where the model becomes too specialized to the training data and performs poorly on unseen data. It is important to monitor the model's performance on a validation set and use techniques such as early stopping to prevent overfitting and ensure that the model generalizes well to new data.
+
+=====
+AFTER ADDING THIRD RELU LAYER
+- Did the deeper model improve performance?
+Slightly bigger model didnt show any improvement in performance. The accuracy remained the same, and the confusion matrix did not show any significant changes. This suggests that adding a third ReLU layer did not provide any additional benefit to the model's ability to learn and generalize from the data in our test scenario on quite small dataset. However, it is possible that with a larger dataset or more complex patterns, a deeper model could potentially improve performance, the models capacity to learn more complex features may not have been fully utilized in this case.
+
+- Did training become slower?
+Yes, training became slower with the addition of the third ReLU layer. The increased complexity of the model requires more computational resources and time to train, especially if the dataset is large. The additional layer adds more parameters to the model, which can lead to longer training times as the model needs to learn and optimize these parameters.
+
+- What is the trade-off between model size and performance?
+The trade-off between model size and performance is that while larger models with more layers and parameters can potentially learn more complex patterns and achieve higher accuracy, they also require more computational resources, longer training times, and may be more prone to overfitting, especially if the dataset is small. On the other hand, smaller models may train faster and require fewer resources but may not capture as much complexity in the data, leading to lower performance. It is important to find a balance between model size and performance based on the specific requirements of the task and the available resources.
+
+
+REPOSITORY LINK: https://github.com/LilConsul/orbital-ai-labs

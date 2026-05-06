@@ -2,7 +2,7 @@ import random
 import shutil
 
 from PIL import Image
-from src.paths import PROCESSED_ROOT, PROJECT_ROOT, RAW_ROOT
+from src.paths import PROCESSED_DIR, PROJECT_ROOT, RAW_DIR
 
 SELECTED_CLASSES = {"Forest": "forest", "River": "river", "Residential": "residential"}
 
@@ -26,11 +26,11 @@ def find_eurosat_folder(raw_root):
 
 
 def prepare_output_directories():
-    if PROCESSED_ROOT.exists():
-        shutil.rmtree(PROCESSED_ROOT)
+    if PROCESSED_DIR.exists():
+        shutil.rmtree(PROCESSED_DIR)
     for split_name in ["train", "test"]:
         for output_class in SELECTED_CLASSES.values():
-            output_dir = PROCESSED_ROOT / split_name / output_class
+            output_dir = PROCESSED_DIR / split_name / output_class
             output_dir.mkdir(parents=True, exist_ok=True)
 
 
@@ -43,12 +43,12 @@ def process_single_image(input_path, output_path):
 
 def prepare_dataset():
     random.seed(RANDOM_SEED)
-    eurosat_folder = find_eurosat_folder(RAW_ROOT)
+    eurosat_folder = find_eurosat_folder(RAW_DIR)
     prepare_output_directories()
 
     print("=== Preparing Image Dataset ===")
     print(f"EuroSAT folder: {eurosat_folder.relative_to(PROJECT_ROOT)}")
-    print(f"Processed dataset: {PROCESSED_ROOT.relative_to(PROJECT_ROOT)}")
+    print(f"Processed dataset: {PROCESSED_DIR.relative_to(PROJECT_ROOT)}")
     for original_class, output_class in SELECTED_CLASSES.items():
         class_dir = eurosat_folder / original_class
 
@@ -75,7 +75,7 @@ def prepare_dataset():
             for index, input_path in enumerate(files):
                 output_filename = f"{output_class}_{index:04d}.jpg"
                 output_path = (
-                    PROCESSED_ROOT / split_name / output_class / output_filename
+                        PROCESSED_DIR / split_name / output_class / output_filename
                 )
                 process_single_image(input_path, output_path)
 

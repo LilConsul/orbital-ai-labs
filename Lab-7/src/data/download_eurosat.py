@@ -1,11 +1,11 @@
-from src.paths import RAW_ROOT
+from src.paths import RAW_DIR
 from torchvision.datasets import EuroSAT
 
 
 def main():
-    RAW_ROOT.mkdir(parents=True, exist_ok=True)
+    RAW_DIR.mkdir(parents=True, exist_ok=True)
 
-    dataset = EuroSAT(root=RAW_ROOT, download=True)
+    dataset = EuroSAT(root=RAW_DIR, download=True)
 
     print(f"Downloading EuroSAT dataset with {len(dataset)} samples")
     print(f"Classes: {dataset.classes}")

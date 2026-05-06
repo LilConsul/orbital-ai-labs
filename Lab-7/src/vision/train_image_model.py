@@ -9,7 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
-from src.paths import MODEL_PATH, PROCESSED_ROOT
+from src.paths import MODEL_PATH, PROCESSED_DIR
 from src.vision.feature_extractor import extract_features
 
 PLOT_PATH = MODEL_PATH.parent / "accuracy_vs_training_time.png"
@@ -43,8 +43,8 @@ def load_image_split(path):
 
 
 def load_training_and_test_data():
-    train_dir = PROCESSED_ROOT / "train"
-    test_dir = PROCESSED_ROOT / "test"
+    train_dir = PROCESSED_DIR / "train"
+    test_dir = PROCESSED_DIR / "test"
 
     X_train, y_train = load_image_split(train_dir)
     X_test, y_test = load_image_split(test_dir)

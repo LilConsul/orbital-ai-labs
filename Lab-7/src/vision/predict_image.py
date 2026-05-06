@@ -3,7 +3,7 @@ from pathlib import Path
 import joblib
 from matplotlib import pyplot as plt
 from PIL import Image
-from src.paths import MODEL_PATH, PROCESSED_ROOT
+from src.paths import MODEL_PATH, PROCESSED_DIR
 from src.vision.feature_extractor import extract_features
 
 MODELS_PATH = MODEL_PATH.parent / "image_classifiers.joblib"
@@ -57,7 +57,7 @@ def predict_image(models, image_path):
 
 def main():
     models = load_models()
-    image_path = PROCESSED_ROOT / "test" / "forest" / "forest_0000.jpg"
+    image_path = PROCESSED_DIR / "test" / "forest" / "forest_0000.jpg"
     predict_image(models, image_path)
 
 
