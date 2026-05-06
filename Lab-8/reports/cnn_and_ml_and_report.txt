@@ -82,4 +82,26 @@ Yes, training became slower with the addition of the third ReLU layer. The incre
 The trade-off between model size and performance is that while larger models with more layers and parameters can potentially learn more complex patterns and achieve higher accuracy, they also require more computational resources, longer training times, and may be more prone to overfitting, especially if the dataset is small. On the other hand, smaller models may train faster and require fewer resources but may not capture as much complexity in the data, leading to lower performance. It is important to find a balance between model size and performance based on the specific requirements of the task and the available resources.
 
 
+====
+– What is the difference between a flattened image vector and an image tensor?
+A flattened image vector is a one-dimensional array that contains all the pixel values of an image in a single line. For example, if you have a 28x28 grayscale image, the flattened vector would have 784 elements (28*28). In contrast, an image tensor is a multi-dimensional array that retains the spatial structure of the image. For example, a 28x28 grayscale image would be represented as a 2D tensor with dimensions (28, 28), while a color image with three channels (RGB) would be represented as a 3D tensor with dimensions (3, 28, 28). The tensor format allows CNNs to capture spatial hierarchies and patterns in the data, which is crucial for tasks like image classification.
+
+– What does a PyTorch Dataset do?
+A PyTorch Dataset is a class that provides an interface for accessing and loading data. It allows you to define how to read and preprocess your data, and it can be used in conjunction with a DataLoader to efficiently load data in batches during training. The Dataset class typically implements two main methods: `__len__()` which returns the number of samples in the dataset, and `__getitem__()` which retrieves a specific sample based on an index. This structure allows for easy integration with PyTorch's training loop and enables efficient data handling, especially when working with large datasets.
+
+– What does a DataLoader do?
+A DataLoader in PyTorch is a utility that provides an efficient way to load data from a Dataset in batches. It handles the shuffling of data, batching, and parallel loading using multiple workers. The DataLoader takes care of the complexities of loading data during training, allowing you to focus on the model architecture and training loop. It can also handle various data transformations and augmentations on-the-fly, making it easier to preprocess data during training.
+
+– Why are CNNs useful for image data?
+CNNs are useful for image data because they are designed to capture spatial hierarchies and patterns in the data. They use convolutional layers to learn local features such as edges, textures, and shapes, which are crucial for understanding the content of images. The pooling layers in CNNs help to reduce the spatial dimensions while retaining important features, allowing the model to learn more abstract representations of the data. This makes CNNs particularly effective for tasks like image classification, object detection, and segmentation.
+
+– What does the model output before the final class is selected?
+Before the final class is selected, the model outputs a vector of raw scores (logits) for each class. These logits represent the unnormalized probabilities of each class being the correct label for the input image. The final class is typically selected by applying a softmax function to these logits, which converts them into normalized probabilities that sum to 1. The class with the highest probability is then chosen as the predicted label for the input image.
+
+– Why can the model classify random or unknown images as one of the known classes?
+The model can classify random or unknown images as one of the known classes because it is designed to output a prediction for any input it receives, regardless of whether the input is similar to the training data. The model learns to recognize patterns and features in the training data, but it may not have a mechanism to identify when an input is completely different from what it has seen during training. As a result, when presented with random or unknown images, the model may still produce a prediction based on the closest matching features it can find, even if those features are not relevant to the actual content of the image.
+
+– Why can this behavior be dangerous in real orbital AI systems?
+This behavior can be dangerous in real orbital AI systems because it can lead to incorrect classifications and potentially harmful decisions based on those classifications. For example, if an orbital AI system is designed to identify and track space debris, misclassifying random or unknown objects as known classes could lead to false alarms or missed detections, which could have serious consequences for satellite operations and space safety. Additionally, if the system is used for critical tasks such as monitoring natural disasters or military applications, incorrect classifications could lead to misguided responses and unintended consequences.
+
 REPOSITORY LINK: https://github.com/LilConsul/orbital-ai-labs
