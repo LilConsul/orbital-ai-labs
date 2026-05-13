@@ -1,0 +1,22 @@
+• Does the transfer model also force a known class prediction?
+The transfer model does not explicitly force a known class prediction, as it is trained to classify inputs into the known classes based on the features learned from the pretrained model.
+
+• Does it give high confidence on unknown input?
+It gave 0.5822 confidence on the unknown input, which is relatively high and indicates that the model is not effectively distinguishing between known and unknown classes. This suggests that the transfer learning approach may not be sufficient for out-of-distribution detection, as it can still assign high confidence to inputs that do not belong to any of the known classes.
+
+• Is transfer learning enough to solve out-of-distribution detection?
+Transfer learning alone is not enough to solve out-of-distribution detection, as it primarily focuses on improving performance on known classes by leveraging pretrained features. To effectively detect out-of-distribution inputs, additional mechanisms such as confidence calibration, anomaly detection techniques, or specialized loss functions designed for out-of-distribution detection would be needed.
+
+• What additional mechanism would be needed in an operational system?
+In an operational system, additional mechanisms such as confidence calibration techniques (e.g., temperature scaling), anomaly detection algorithms, or specialized loss functions (e.g., out-of-distribution detection loss) would be needed to improve the model's ability to identify and handle out-of-distribution inputs. These mechanisms can help reduce the confidence assigned to unknown inputs and improve the overall robustness of the system in real-world scenarios where unexpected inputs may occur.
+
+===
+Engineering Questions
+• Did normalization improve accuracy?
+It improved accuracy slighlty for known classes, and it also reduced the confidence on the unknown input, which is a positive outcome for out-of-distribution detection.
+
+• Did training become more stable?
+Normalization can help stabilize training by ensuring that the input features are on a similar scale, which can lead to faster convergence and improved performance. In this case, it likely contributed to more stable training and better generalization to the known classes.
+
+• Why may pretrained models require specific preprocessing?
+Pretrained models may require specific preprocessing because they were trained on a specific dataset (e.g., ImageNet) with certain preprocessing steps (e.g., normalization, resizing). To ensure that the input data is in the same format and scale as the data used during pretraining, it is important to apply the same preprocessing steps.

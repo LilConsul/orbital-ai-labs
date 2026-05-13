@@ -1,0 +1,20 @@
+• Did fine-tuning improve accuracy?
+Yes, but the improvement was not significant. The accuracy increased from 97% to 100%, which is a modest gain considering the additional computational cost of fine-tuning.
+
+• Did training become slower?
+Yes, fine-tuning took approximately 3.59 seconds longer than training with a frozen feature extractor. This is expected since fine-tuning involves updating more parameters in the model.
+
+• Did the confusion matrix change?
+Yes, the confusion matrix for the fine-tuned model showed that all classes were correctly classified, while the frozen model had only 1 misclassification, particularly between 'residential' and 'river' classes.
+
+• Did any class improve more than others?
+The 'river' class showed 12/12 correct results in the fine-tuned model, while the frozen model had 11/12 correct classifications for this class.
+
+• Did any class become worse?
+No class became worse in the fine-tuned model. All classes either improved or remained the same in terms of classification accuracy.
+
+• Is fine-tuning worth the additional computational cost?
+It depends on the task, for my case it slighlty improved the accuracy, but it may not be worth the additional computational cost for all applications. If the improvement in accuracy is critical for the task at hand, then fine-tuning may be justified. However, if computational resources are limited or if the improvement is marginal, using a frozen model may be more efficient.
+
+• Would you use the frozen model or the fine-tuned model in a small-data satellite classification problem?
+In a small-data satellite classification problem, I would likely choose the frozen model. The frozen model already achieved a high accuracy of 97%, and the fine-tuned model only provided a marginal improvement to 100%. Given the limited data and computational resources typically associated with small-data problems, the frozen model would be more efficient and still provide strong performance without the need for additional fine-tuning.

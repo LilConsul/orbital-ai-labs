@@ -1,0 +1,62 @@
+MODEL COMPARISON
+================
+1. SimpleCNN from scratch
+Accuracy: 0.9151
+Training time: 0.79 seconds
+Comments: The SimpleCNN model trained from scratch achieved a test accuracy of 0.9151 on the EuroSAT subset. This indicates that the model was able to learn useful features from the data, but it may have been limited by its capacity and the amount of training data available.
+
+2. ResNet18 frozen feature extractor
+Accuracy: 0.9722
+Training time: 22.03 seconds
+Comments: The ResNet18 model with a frozen feature extractor achieved a test accuracy of 0.9722. This suggests that the pretrained features from ImageNet were highly effective for the EuroSAT classification task, even without fine-tuning the convolutional layers. The training time was significantly longer than the SimpleCNN, likely due to the larger model size and the need to train the new classifier head.
+
+3. ResNet18 fine-tuned last block
+Accuracy: 1.0000
+Training time: 25.62 seconds
+Comments: The ResNet18 model with fine-tuning of the last block achieved a perfect test accuracy of 1.0000. This indicates that fine-tuning the last block allowed the model to adapt the pretrained features more effectively to the specific characteristics of the EuroSAT dataset. The training time was slightly longer than the frozen feature extractor approach, likely due to the additional parameters being updated during training.
+
+BEST ACCURACY:
+ResNet18 fine-tuned last block with an accuracy of 1.0000.
+
+FASTEST TRAINING:
+SimpleCNN from scratch with a training time of 0.79 seconds.
+
+BEST ENGINEERING TRADE-OFF:
+The ResNet18 frozen feature extractor offers a good balance between accuracy and training time. While it does not achieve the perfect accuracy of the fine-tuned model, it still performs very well with a test accuracy of 0.9722 and a significantly shorter training time compared to the fine-tuned version.
+
+====
+Engineering Questions
+• Which model achieved the best accuracy?
+The ResNet18 fine-tuned last block achieved the best accuracy with a test accuracy of 1.0000.
+
+• Which model trained fastest?
+The SimpleCNN from scratch trained the fastest with a training time of 0.79 seconds.
+
+• Which model required the least implementation effort?
+The ResNet18 frozen feature extractor required the least implementation effort, as it only involved replacing the final linear layer and training a new classifier head, without needing to fine-tune any of the convolutional layers.
+
+• Which model is most suitable for a small dataset?
+The ResNet18 frozen feature extractor is most suitable for a small dataset, as it leverages pretrained features from ImageNet, which can help improve performance even when the amount of training data is limited. The SimpleCNN may struggle to learn effective features from a small dataset, while the fine-tuned ResNet18 may require more data to avoid overfitting when updating the convolutional layers.
+
+• Which model is most suitable for a real operational system?
+The ResNet18 frozen feature extractor is most suitable for a real operational system, as it provides a good balance of high accuracy and reasonable training time. It can be deployed more quickly than the fine-tuned version while still achieving strong performance, making it a practical choice for real-world applications where resources and time may be limited.
+
+• When would you train a CNN from scratch?
+When you don't have access to a suitable pretrained model, or when your dataset is significantly different from the datasets used for pretraining (e.g., medical images, satellite images) and you have enough data to train a model effectively from scratch. Or when you don't have enought computational resources to fine-tune a large pretrained model.
+
+• When would you use transfer learning?
+When you have a limited amount of training data and want to leverage the knowledge learned from a large dataset (like ImageNet) to improve performance on your specific task. Transfer learning can help achieve better accuracy with less training time, especially when the target task is similar to the pretraining task.
+
+• When would you fine-tune a pretrained model?
+When you have a moderate amount of training data and want to achieve the best possible performance by allowing the model to adapt the pretrained features to your specific task. Fine-tuning can be particularly beneficial when the target task is somewhat different from the pretraining task, as it allows the model to learn more task-specific features while still benefiting from the general visual features learned during pretraining.
+
+===
+More Images Per Class Questions:
+• Which model benefits more from additional data?
+SimpleCNN got worse results, other models showed almost no change.
+
+• Does the accuracy gap change?
+The accuracy gap between the SimpleCNN and the pretrained models (ResNet18) increased with more data, as the SimpleCNN struggled to learn effective features from the additional data, while the pretrained models were able to leverage their existing knowledge to maintain high accuracy.
+
+• Does training time increase significantly?
+The training time for the SimpleCNN increased significantly with more data, as it had to learn all features from scratch. In contrast, the training time for the pretrained models (ResNet18) did not increase as much, as they were able to leverage their existing features and only needed to train the classifier head or fine-tune a small portion of the model.

@@ -1,0 +1,15 @@
+TRANSFER LEARNING REPORT
+========================
+
+Model: ResNet18 pretrained on ImageNet
+Training mode: fine-tuned last ResNet block
+Classifier: layer4 and final classifier
+
+Classes: ['forest', 'residential', 'river']
+Epochs: 8
+Learning rate: 0.001
+Training time: 25.13 seconds
+Test accuracy: 1.0000
+
+Interpretation:
+The model reused pretrained visual features and trained only a new classifier head for the EuroSAT subset.
