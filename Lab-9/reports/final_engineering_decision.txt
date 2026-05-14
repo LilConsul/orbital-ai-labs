@@ -1,0 +1,65 @@
+• Selected model?
+ResNet18 frozen feature extractor (transfer learning).
+
+• Technical justification?
+Same top accuracy as fine-tuning in rerun (1.0000) with lower training cost (22.55s vs 25.74s) and far fewer trainable parameters (1,539 vs 8,395,267).
+
+• Expected advantages?
+High accuracy, lower compute, simpler retraining, and easier maintenance.
+
+• Possible risks?
+Closed-set behavior on unknown inputs (model still assigns a known class, prior report confidence ~0.58); occasional class confusion can still appear.
+
+• Deployment considerations?
+Keep ImageNet-style preprocessing, monitor confidence/class drift, add OOD guardrail (threshold/calibration), and keep Grad-CAM checks for model diagnostics.
+
+• Classification accuracy?
+SimpleCNN: 0.9167; ResNet18 frozen: 1.0000; ResNet18 fine-tuned: 1.0000.
+
+• Training time?
+SimpleCNN: 1.03s (fastest); ResNet18 frozen: 22.55s; fine-tuned: 25.74s.
+
+• Implementation complexity?
+Lowest for frozen transfer (replace/train only classifier head).
+
+• Risk of overfitting?
+Highest for fine-tuning on small data; lower for frozen transfer due limited trainable layers.
+
+• Robustness on unknown inputs?
+Limited: transfer learning alone is not enough for OOD detection (needs extra mechanism).
+
+• Suitability for small datasets?
+Frozen transfer is most suitable (strong prior features + lower overfitting risk).
+
+• Expected operational reliability?
+Highest practical reliability: frozen ResNet18 gives strong accuracy with more stable engineering trade-off.
+
+
+===
+Additional Questions
+
+• What is transfer learning?
+Transfer learning reuses knowledge from a model trained on a large dataset and adapts it to a new task.
+
+• What is a pretrained model?
+It is a model already trained before, usually on a big dataset (for example ImageNet).
+
+• What does it mean to freeze layers?
+It means keeping selected layers unchanged during training (no weight updates).
+
+• What does it mean to replace the classifier head?
+It means replacing the final output layer with a new one matching your target classes.
+
+• What is fine-tuning?
+Fine-tuning means unfreezing some pretrained layers and training them on your task data.
+
+• Which approach worked best: SimpleCNN, frozen ResNet18 or fine-tuned ResNet18?
+On this run, frozen ResNet18 and fine-tuned ResNet18 tied at 1.0000 accuracy; frozen is better trade-off due lower training time.
+
+• What are the engineering trade-offs between accuracy, training time and model complexity?
+SimpleCNN is fastest but less accurate; fine-tuned is most complex and slowest; frozen transfer gives top accuracy with lower complexity than fine-tuning.
+
+• Would you use transfer learning in an operational Earth Observation system? Why?
+Yes. It gives strong accuracy on small datasets, faster deployment, and better engineering reliability when combined with OOD monitoring.
+
+Repository Link: https://github.com/LilConsul/orbital-ai-labs.git

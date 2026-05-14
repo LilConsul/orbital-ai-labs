@@ -8,7 +8,7 @@ Classifier: layer4 and final classifier
 Classes: ['forest', 'residential', 'river']
 Epochs: 8
 Learning rate: 0.001
-Training time: 25.13 seconds
+Training time: 25.74 seconds
 Test accuracy: 1.0000
 
 Interpretation:

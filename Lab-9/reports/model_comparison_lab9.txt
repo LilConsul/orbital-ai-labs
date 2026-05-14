@@ -60,3 +60,19 @@ The accuracy gap between the SimpleCNN and the pretrained models (ResNet18) incr
 
 • Does training time increase significantly?
 The training time for the SimpleCNN increased significantly with more data, as it had to learn all features from scratch. In contrast, the training time for the pretrained models (ResNet18) did not increase as much, as they were able to leverage their existing features and only needed to train the classifier head or fine-tune a small portion of the model.
+
+
+===
+Analysis Questions from Transfer Gallery:
+• Which predictions look visually correct?
+The model didnt predict 'residential' class at all, but the other classes look visually correct.
+
+• Are any wrong predictions understandable from the image?
+The model's failure to predict the 'residential' class could be understandable if the images in that class have features that are not well-represented in the training data, or if they are visually similar to other classes, leading to confusion. For example, if the 'residential' images contain a lot of greenery or urban features that overlap with other classes, the model might struggle to differentiate them.
+
+• Does the model seem more confident on some classes than others?
+The model showed more confidence in predicting 'river' class more then others. This could be due to the distinct visual features of river images, such as the presence of water and specific textures, which may make them easier for the model to identify compared to other classes that might have more variability in their visual features.
+
+• Can visual inspection reveal problems that accuracy alone does not show?
+Yes, visual inspection can reveal issues such as class imbalance, where the model may be biased towards predicting certain classes more frequently than others. It can also highlight specific instances where the model consistently fails to predict a particular class, which may indicate that the model is not learning the relevant features for that class. Additionally, visual inspection can help identify if the model is making predictions based on spurious correlations in the data rather than meaningful features, which may not be evident from accuracy metrics alone.
+
