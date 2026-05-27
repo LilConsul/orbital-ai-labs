@@ -13,6 +13,8 @@ from paths import (
     PROJECT_DIR,
 )
 from PIL import Image, ImageFilter, ImageEnhance
+import csv
+import random
 from pytorch_grad_cam import EigenCAM, GradCAM, HiResCAM, LayerCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from torchvision import models, transforms
@@ -312,12 +314,151 @@ def run_transform_sensitivity(image_path, model, class_names, out_dir, max_trans
     return results
 
 
+def compute_iou_from_heatmaps(h1, h2, thresh_quantile=0.7):
+    h1n = (h1 - h1.min()) / (h1.max() - h1.min() + 1e-8)
+    h2n = (h2 - h2.min()) / (h2.max() - h2.min() + 1e-8)
+    thr1 = np.quantile(h1n, thresh_quantile)
+    thr2 = np.quantile(h2n, thresh_quantile)
+    m1 = h1n >= thr1
+    m2 = h2n >= thr2
+    inter = np.logical_and(m1, m2).sum()
+    union = np.logical_or(m1, m2).sum()
+    if union == 0:
+        return 0.0
+    return inter / union
+
+
+def center_crop(pil_img, fraction=0.8):
+    w, h = pil_img.size
+    new_w = int(w * fraction)
+    new_h = int(h * fraction)
+    left = (w - new_w) // 2
+    top = (h - new_h) // 2
+    return pil_img.crop((left, top, left + new_w, top + new_h)).resize((w, h))
+
+
+def random_crop(pil_img, fraction=0.8):
+    w, h = pil_img.size
+    new_w = int(w * fraction)
+    new_h = int(h * fraction)
+    left = random.randint(0, w - new_w)
+    top = random.randint(0, h - new_h)
+    return pil_img.crop((left, top, left + new_w, top + new_h)).resize((w, h))
+
+
+def run_independent_experiment(model, class_names, out_dir, images_per_class=5):
+    grouped = get_sample_images_by_class()
+    rows = []
+
+    noise_levels = [0.02, 0.05, 0.1]
+    crops = {"center_crop": lambda im: center_crop(im, 0.8), "random_crop": lambda im: random_crop(im, 0.8)}
+
+    def process_transform(image_rel, pil_img, transform_name, orig_conf, orig_heat, orig_center, class_name):
+        t = pil_to_model_tensor(pil_img)
+        pred, conf = predict(model, t, class_names)
+        heat = create_heatmap(model, t, GradCAM)
+        center = heatmap_center_of_mass(heat)
+        dist = math.hypot(center[0] - orig_center[0], center[1] - orig_center[1])
+        iou = compute_iou_from_heatmaps(orig_heat, heat)
+        rows.append({
+            "image": image_rel,
+            "class": class_name,
+            "transform": transform_name,
+            "pred": pred,
+            "conf": conf,
+            "conf_delta": conf - orig_conf,
+            "center_shift": dist,
+            "cam_iou": iou,
+        })
+
+    for class_name, paths in grouped.items():
+        selected = list(paths)[:images_per_class]
+        for image_path in selected:
+            image_rel = str(image_path.relative_to(PROJECT_DIR))
+            pil = Image.open(image_path).convert("RGB")
+
+            # baseline
+            orig_tensor = pil_to_model_tensor(pil)
+            orig_pred, orig_conf = predict(model, orig_tensor, class_names)
+            orig_heat = create_heatmap(model, orig_tensor, GradCAM)
+            orig_center = heatmap_center_of_mass(orig_heat)
+
+            # record original row
+            rows.append({
+                "image": image_rel,
+                "class": class_name,
+                "transform": "original",
+                "pred": orig_pred,
+                "conf": orig_conf,
+                "conf_delta": 0.0,
+                "center_shift": 0.0,
+                "cam_iou": 1.0,
+            })
+
+            # brightness
+            process_transform(image_rel, ImageEnhance.Brightness(pil).enhance(1.5), "bright_up", orig_conf, orig_heat, orig_center, class_name)
+            process_transform(image_rel, ImageEnhance.Brightness(pil).enhance(0.6), "bright_down", orig_conf, orig_heat, orig_center, class_name)
+
+            # flip
+            process_transform(image_rel, pil.transpose(Image.FLIP_LEFT_RIGHT), "hflip", orig_conf, orig_heat, orig_center, class_name)
+
+            # rotate
+            process_transform(image_rel, pil.rotate(90, expand=True), "rotate90", orig_conf, orig_heat, orig_center, class_name)
+
+            # gaussian blur
+            process_transform(image_rel, pil.filter(ImageFilter.GaussianBlur(radius=2)), "gaussian_blur", orig_conf, orig_heat, orig_center, class_name)
+
+            # noise levels
+            arr = np.asarray(pil).astype(np.float32) / 255.0
+            for nl in noise_levels:
+                noise = np.random.normal(0, nl, size=arr.shape).astype(np.float32)
+                noisy = np.clip(arr + noise, 0.0, 1.0)
+                noisy_img = Image.fromarray((noisy * 255).astype(np.uint8))
+                process_transform(image_rel, noisy_img, f"noise_{nl}", orig_conf, orig_heat, orig_center, class_name)
+
+            # crops
+            for cname, func in crops.items():
+                cimg = func(pil)
+                process_transform(image_rel, cimg, cname, orig_conf, orig_heat, orig_center, class_name)
+
+    # write CSV
+    out_csv = out_dir / "experiment_summary.csv"
+    keys = ["image", "class", "transform", "pred", "conf", "conf_delta", "center_shift", "cam_iou"]
+    with open(out_csv, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=keys)
+        writer.writeheader()
+        for r in rows:
+            writer.writerow(r)
+
+    import pandas as pd
+
+    df = pd.DataFrame(rows)
+    # boxplot conf_delta
+    plt.figure(figsize=(10, 6))
+    df.boxplot(column="conf_delta", by="transform", rot=45)
+    plt.title("ΔConfidence by transform")
+    plt.suptitle("")
+    plt.tight_layout()
+    plt.savefig(out_dir / "box_conf_delta.png")
+
+    plt.figure(figsize=(10, 6))
+    df.boxplot(column="center_shift", by="transform", rot=45)
+    plt.title("Center shift by transform")
+    plt.suptitle("")
+    plt.tight_layout()
+    plt.savefig(out_dir / "box_center_shift.png")
+
+    print(f"Experiment saved to {out_csv} and summary plots saved.")
+
+
+
 def main():
     GRADCAM_EXAMPLES_DIR.mkdir(parents=True, exist_ok=True)
 
     class_names = load_class_names()
     model = load_model(class_names)
 
+    print("Running Independent Task 1...")
     class_to_image_paths = get_sample_images_by_class()
     for class_name, image_paths in class_to_image_paths.items():
         safe_class_name = class_name.lower().replace(" ", "_")
@@ -331,12 +472,17 @@ def main():
 
     # Independent Task 2: sensitivity to image transformations
     # For each class, run analysis on the first image found
+    print("Running Independent Task 2...")
     for class_name, image_paths in class_to_image_paths.items():
         if not image_paths:
             continue
         image_path = image_paths[0]
         print(f"Running transform sensitivity for {class_name} / {image_path.name}")
         run_transform_sensitivity(image_path, model, class_names, GRADCAM_EXAMPLES_DIR)
+
+    # Independent Task 3: run the aggregated experiment across several images per class
+    print("Running Independent Task 3...")
+    run_independent_experiment(model, class_names, GRADCAM_EXAMPLES_DIR, images_per_class=3)
 
     comparison_image_path = get_image_path(TEST_DIR, f_num=0, img_num=0)
     comparison_image, comparison_tensor = load_image(comparison_image_path)

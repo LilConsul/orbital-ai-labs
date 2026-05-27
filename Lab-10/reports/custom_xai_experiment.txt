@@ -1,0 +1,36 @@
+Goal
+The goal of this experiment was to investigate how different types of input modifications affect model predictions and attention. In particular, the experiment focused on the impact of increasing noise levels and image cropping on prediction confidence and Grad-CAM attention consistency across different classes.
+
+Methodology
+Three classes were analyzed: forest, residential, and river. For multiple images from each class, several transformations were applied:
+    noise with different levels (0.02, 0.05, 0.1)
+    center crop
+    random crop
+    brightness adjustments
+    geometric transformations (flip, rotation)
+
+For each transformed image, the following were measured:
+    prediction and confidence
+    change in confidence (Δconfidence)
+    spatial shift of attention (center shift)
+    similarity of attention (overlap score)
+
+The results were summarized using box plots showing distribution of confidence changes and attention shifts.
+
+Observations
+- Noise has a strong negative effect on performance. Higher noise levels reduce confidence and sometimes cause misclassification, especially for residential and river images.
+
+- Brightness increase also significantly decreases confidence, while brightness decrease has a smaller but still noticeable effect.
+
+- Gaussian blur shows mixed results. It has little impact on forest images but often causes errors for residential and river.
+
+- Cropping depends on the type. Center cropping usually preserves performance, while random cropping often reduces confidence.
+
+- Rotation and horizontal flip have minimal impact. Predictions stay stable, and only spatial attention shifts as expected.
+
+- Attention stability varies by class. Forest shows more stable attention, while residential and river are more sensitive to transformations.
+
+Conclusions
+The results show that the model is only partially robust and its behavior depends strongly on the type of transformation and the image class. It handles geometric transformations such as rotation and horizontal flipping relatively well, as confidence remains stable and predictions are usually correct. However, the model is much more sensitive to changes that affect the appearance of the image, particularly noise and brightness. These transformations often reduce confidence significantly and can even lead to incorrect predictions, especially for residential and river images.
+The model performs more consistently on forest images, where attention and predictions remain relatively stable even under moderate transformations. In contrast, residential and river classes are more sensitive, which suggests that the model relies on more specific and fragile visual features for these categories. Cropping further confirms that important information is often localized, as center cropping tends to preserve performance while random cropping may remove critical regions and degrade predictions.
+Overall, the model relies heavily on texture and intensity patterns rather than more robust, high-level features. As a result, both predictions and explanations become unstable when the input is degraded. This indicates that while the model performs well under ideal conditions, its reliability in real-world scenarios with noise, lighting variation, or partial views may be limited.
