@@ -1,0 +1,8 @@
+Image: data/processed/images/test/river/river_0000.jpg
+Original: river (0.8812)
+hflip: pred=river, conf=0.9221, Δconf=0.0409, shift=44.8138
+rotate90: pred=river, conf=0.9653, Δconf=0.0841, shift=43.5417
+gaussian_blur: pred=forest, conf=0.7362, Δconf=-0.1451, shift=56.7960
+bright_up: pred=river, conf=0.8221, Δconf=-0.0591, shift=11.8892
+bright_down: pred=forest, conf=0.6453, Δconf=-0.2360, shift=36.9722
+noisy: pred=river, conf=0.4250, Δconf=-0.4562, shift=66.8390

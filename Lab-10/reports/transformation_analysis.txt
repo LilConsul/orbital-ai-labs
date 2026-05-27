@@ -1,0 +1,20 @@
+• Did confidence change?
+Confidence does change depending on the transformation, and in some cases quite noticeably. For forest, the changes are relatively small except for brightness increase and added noise, where confidence drops by around 0.12–0.14. For residential and river, the effect is much stronger. For example, residential drops by almost 0.47 with brightness increase, and river drops by about 0.46 with noise. In some cases, the prediction even changes class, which shows that certain transformations can significantly confuse the model.
+
+• Did attention regions move?
+The attention regions do move, sometimes slightly and sometimes quite a lot. For simple transformations like horizontal flip or rotation, the attention tends to shift in a predictable way, following the transformation of the image itself. However, for noise or heavy brightness changes, the attention can shift much more irregularly, sometimes focusing on completely different parts of the image. The shift values confirm this, with some cases going above 60 or even 70, indicating large changes in what the model considers important
+
+• Which transformations had the largest impact?
+The transformations that had the largest impact were brightness changes, especially increasing brightness, and adding noise. In both cases, the confidence dropped significantly and, in some situations, the model even changed its prediction. This suggests that the model is quite sensitive to changes in image intensity and random disturbances, which distort the original visual patterns.
+
+Noise had a particularly strong effect because it introduces random textures that the model may misinterpret as meaningful features. Similarly, brightness changes alter the overall intensity distribution of the image, which seems to confuse the model and reduce its ability to correctly recognize patterns.
+
+• Which transformations had minimal impact?
+The transformations with minimal impact were Gaussian blur, rotation, and horizontal flipping. These transformations preserve the overall structure of the image, even if some details are slightly altered. As a result, the model is still able to recognize the main patterns and maintain relatively stable predictions.
+
+Rotation and flipping, in particular, show that the model is fairly robust to geometric changes. The confidence either stays similar or even slightly improves, which suggests that the model has learned orientation-invariant features to some extent.
+
+Gaussian blur also has a relatively small impact in many cases, especially for the forest example, which indicates that the model relies more on global patterns rather than fine details in that class.
+
+• Does the model appear robust?
+Overall, the model shows partial robustness. It handles geometric transformations well, but struggles with changes that affect pixel values and texture, such as brightness and noise. This indicates that the model relies heavily on visual appearance rather than deeper, more stable representations.

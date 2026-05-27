@@ -1,0 +1,8 @@
+Image: data/processed/images/test/residential/residential_0000.jpg
+Original: residential (0.8481)
+hflip: pred=residential, conf=0.7144, Δconf=-0.1337, shift=17.3803
+rotate90: pred=residential, conf=0.9097, Δconf=0.0617, shift=15.8768
+gaussian_blur: pred=forest, conf=0.4636, Δconf=-0.3845, shift=74.2484
+bright_up: pred=forest, conf=0.3799, Δconf=-0.4682, shift=61.3722
+bright_down: pred=residential, conf=0.6871, Δconf=-0.1610, shift=18.5622
+noisy: pred=residential, conf=0.8514, Δconf=0.0033, shift=7.0134

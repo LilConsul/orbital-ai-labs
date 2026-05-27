@@ -1,0 +1,8 @@
+Image: data/processed/images/test/forest/forest_0000.jpg
+Original: forest (0.9058)
+hflip: pred=forest, conf=0.8871, Δconf=-0.0187, shift=18.0799
+rotate90: pred=forest, conf=0.9086, Δconf=0.0028, shift=27.0460
+gaussian_blur: pred=forest, conf=0.9123, Δconf=0.0065, shift=18.8811
+bright_up: pred=forest, conf=0.7847, Δconf=-0.1210, shift=4.3774
+bright_down: pred=forest, conf=0.8897, Δconf=-0.0161, shift=23.9864
+noisy: pred=forest, conf=0.7672, Δconf=-0.1386, shift=20.2682

@@ -10,8 +10,9 @@ from paths import (
     MODELS_TRANSFER_MODEL_PATH,
     TEST_DIR,
     get_image_path,
+    PROJECT_DIR,
 )
-from PIL import Image
+from PIL import Image, ImageFilter, ImageEnhance
 from pytorch_grad_cam import EigenCAM, GradCAM, HiResCAM, LayerCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from torchvision import models, transforms
@@ -168,6 +169,149 @@ def get_sample_images_by_class():
     return grouped_images
 
 
+def pil_to_model_tensor(pil_image):
+    """Convert a PIL image to the model input tensor (batch dim added)."""
+    transform = transforms.Compose(
+        [transforms.Resize((224, 224)), transforms.ToTensor()]
+    )
+    return transform(pil_image).unsqueeze(0)
+
+
+def get_transformed_versions(pil_image):
+    versions = {}
+    versions["original"] = pil_image.copy()
+    versions["hflip"] = pil_image.transpose(Image.FLIP_LEFT_RIGHT)
+    versions["rotate90"] = pil_image.rotate(90, expand=True)
+    versions["gaussian_blur"] = pil_image.filter(ImageFilter.GaussianBlur(radius=2))
+    enhancer = ImageEnhance.Brightness(pil_image)
+    versions["bright_up"] = enhancer.enhance(1.5)
+    versions["bright_down"] = enhancer.enhance(0.6)
+
+    # Add Gaussian noise to the image (keeps same mode)
+    arr = np.asarray(pil_image).astype(np.float32) / 255.0
+    noise = np.random.normal(loc=0.0, scale=0.05, size=arr.shape).astype(np.float32)
+    noisy = np.clip(arr + noise, 0.0, 1.0)
+    noisy_img = Image.fromarray((noisy * 255).astype(np.uint8))
+    versions["noisy"] = noisy_img
+
+    return versions
+
+
+def heatmap_center_of_mass(heatmap):
+    h = heatmap.shape[0]
+    w = heatmap.shape[1]
+    cam = heatmap.copy().astype(np.float32)
+    total = cam.sum()
+    if total <= 0:
+        return (w / 2.0, h / 2.0)
+    cam_norm = cam / total
+    xs = np.arange(w)
+    ys = np.arange(h)
+    cx = (cam_norm.sum(axis=0) * xs).sum()
+    cy = (cam_norm.sum(axis=1) * ys).sum()
+    return (cx, cy)
+
+
+def run_transform_sensitivity(image_path, model, class_names, out_dir, max_transforms=None):
+    pil_image = Image.open(image_path).convert("RGB")
+    versions = get_transformed_versions(pil_image)
+    if max_transforms is not None:
+        # keep deterministic order
+        keys = list(versions.keys())[:max_transforms]
+        versions = {k: versions[k] for k in keys}
+
+    results = {}
+
+    # Process original first
+    orig_pil = versions["original"]
+    orig_tensor = pil_to_model_tensor(orig_pil)
+    orig_pred, orig_conf = predict(model, orig_tensor, class_names)
+    orig_heat = create_heatmap(model, orig_tensor, GradCAM)
+    orig_center = heatmap_center_of_mass(orig_heat)
+    results["original"] = {
+        "pred": orig_pred,
+        "conf": orig_conf,
+        "heat": orig_heat,
+        "center": orig_center,
+    }
+
+    # Iterate transforms
+    for name, img in versions.items():
+        if name == "original":
+            continue
+        tensor = pil_to_model_tensor(img)
+        pred, conf = predict(model, tensor, class_names)
+        heat = create_heatmap(model, tensor, GradCAM)
+        center = heatmap_center_of_mass(heat)
+        # compute metrics
+        conf_delta = conf - orig_conf
+        # Euclidean distance in pixels (heatmap has same spatial dims as model output, usually 7x7 or similar)
+        # But create_heatmap returns cam resized to input (224x224) by show_cam_on_image step; here it's native cam dims
+        # We'll compute distance in heatmap pixel coordinates and normalize by diagonal
+        dx = center[0] - orig_center[0]
+        dy = center[1] - orig_center[1]
+        dist = math.hypot(dx, dy)
+        results[name] = {
+            "pred": pred,
+            "conf": conf,
+            "heat": heat,
+            "center": center,
+            "conf_delta": conf_delta,
+            "center_shift": dist,
+        }
+
+    # Create and save comparison figure
+    n_versions = len(versions)
+    cols = 3
+    rows = math.ceil((n_versions + 1) / cols)
+    fig, axes = plt.subplots(rows, cols, figsize=(5 * cols, 4 * rows))
+    axes = np.atleast_1d(axes).ravel()
+
+    # Show original image and overlay
+    image_array = np.asarray(orig_pil.resize((224, 224)), dtype=np.float32) / 255.0
+    orig_vis = show_cam_on_image(image_array, orig_heat, use_rgb=True)
+    axes[0].imshow(orig_vis)
+    axes[0].set_title(f"original\n{results['original']['pred']} ({results['original']['conf']:.2f})")
+    axes[0].axis("off")
+
+    idx = 1
+    for name, img in versions.items():
+        if name == "original":
+            continue
+        # prepare overlay from saved heatmap
+        img_resized = img.resize((224, 224))
+        arr = np.asarray(img_resized, dtype=np.float32) / 255.0
+        vis = show_cam_on_image(arr, results[name]['heat'], use_rgb=True)
+        title = f"{name}\n{results[name]['pred']} ({results[name]['conf']:.2f})\nΔconf={results[name]['conf_delta']:.3f}\nshift={results[name]['center_shift']:.2f}"
+        axes[idx].imshow(vis)
+        axes[idx].set_title(title)
+        axes[idx].axis("off")
+        idx += 1
+
+    for ax in axes[idx:]:
+        ax.axis("off")
+
+    fig.suptitle(f"Sensitivity: {image_path.stem}", fontsize=16)
+    plt.tight_layout(rect=(0, 0, 1, 0.96))
+    out_path = out_dir / f"sensitivity_{image_path.stem}.png"
+    plt.savefig(out_path)
+    plt.show()
+
+    # Save numeric summary
+    summary_lines = [f"Image: {image_path.relative_to(PROJECT_DIR)}", f"Original: {orig_pred} ({orig_conf:.4f})"]
+    for name, res in results.items():
+        if name == "original":
+            continue
+        summary_lines.append(
+            f"{name}: pred={res['pred']}, conf={res['conf']:.4f}, Δconf={res.get('conf_delta',0):.4f}, shift={res.get('center_shift',0):.4f}"
+        )
+    summary_text = "\n".join(summary_lines)
+    (out_dir / f"sensitivity_{image_path.stem}.txt").write_text(summary_text)
+
+    print(summary_text)
+    return results
+
+
 def main():
     GRADCAM_EXAMPLES_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -184,6 +328,15 @@ def main():
             class_names,
             GRADCAM_EXAMPLES_DIR / f"gradcam_{safe_class_name}.png",
         )
+
+    # Independent Task 2: sensitivity to image transformations
+    # For each class, run analysis on the first image found
+    for class_name, image_paths in class_to_image_paths.items():
+        if not image_paths:
+            continue
+        image_path = image_paths[0]
+        print(f"Running transform sensitivity for {class_name} / {image_path.name}")
+        run_transform_sensitivity(image_path, model, class_names, GRADCAM_EXAMPLES_DIR)
 
     comparison_image_path = get_image_path(TEST_DIR, f_num=0, img_num=0)
     comparison_image, comparison_tensor = load_image(comparison_image_path)
