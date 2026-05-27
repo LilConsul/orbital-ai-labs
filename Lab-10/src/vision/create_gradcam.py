@@ -1,4 +1,6 @@
+import csv
 import math
+import random
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,13 +10,11 @@ from paths import (
     GRADCAM_EXAMPLES_DIR,
     MODELS_TRANSFER_CLASS_PATH,
     MODELS_TRANSFER_MODEL_PATH,
+    PROJECT_DIR,
     TEST_DIR,
     get_image_path,
-    PROJECT_DIR,
 )
-from PIL import Image, ImageFilter, ImageEnhance
-import csv
-import random
+from PIL import Image, ImageEnhance, ImageFilter
 from pytorch_grad_cam import EigenCAM, GradCAM, HiResCAM, LayerCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from torchvision import models, transforms
@@ -214,7 +214,9 @@ def heatmap_center_of_mass(heatmap):
     return (cx, cy)
 
 
-def run_transform_sensitivity(image_path, model, class_names, out_dir, max_transforms=None):
+def run_transform_sensitivity(
+    image_path, model, class_names, out_dir, max_transforms=None
+):
     pil_image = Image.open(image_path).convert("RGB")
     versions = get_transformed_versions(pil_image)
     if max_transforms is not None:
@@ -273,7 +275,9 @@ def run_transform_sensitivity(image_path, model, class_names, out_dir, max_trans
     image_array = np.asarray(orig_pil.resize((224, 224)), dtype=np.float32) / 255.0
     orig_vis = show_cam_on_image(image_array, orig_heat, use_rgb=True)
     axes[0].imshow(orig_vis)
-    axes[0].set_title(f"original\n{results['original']['pred']} ({results['original']['conf']:.2f})")
+    axes[0].set_title(
+        f"original\n{results['original']['pred']} ({results['original']['conf']:.2f})"
+    )
     axes[0].axis("off")
 
     idx = 1
@@ -283,7 +287,7 @@ def run_transform_sensitivity(image_path, model, class_names, out_dir, max_trans
         # prepare overlay from saved heatmap
         img_resized = img.resize((224, 224))
         arr = np.asarray(img_resized, dtype=np.float32) / 255.0
-        vis = show_cam_on_image(arr, results[name]['heat'], use_rgb=True)
+        vis = show_cam_on_image(arr, results[name]["heat"], use_rgb=True)
         title = f"{name}\n{results[name]['pred']} ({results[name]['conf']:.2f})\nΔconf={results[name]['conf_delta']:.3f}\nshift={results[name]['center_shift']:.2f}"
         axes[idx].imshow(vis)
         axes[idx].set_title(title)
@@ -300,12 +304,15 @@ def run_transform_sensitivity(image_path, model, class_names, out_dir, max_trans
     plt.show()
 
     # Save numeric summary
-    summary_lines = [f"Image: {image_path.relative_to(PROJECT_DIR)}", f"Original: {orig_pred} ({orig_conf:.4f})"]
+    summary_lines = [
+        f"Image: {image_path.relative_to(PROJECT_DIR)}",
+        f"Original: {orig_pred} ({orig_conf:.4f})",
+    ]
     for name, res in results.items():
         if name == "original":
             continue
         summary_lines.append(
-            f"{name}: pred={res['pred']}, conf={res['conf']:.4f}, Δconf={res.get('conf_delta',0):.4f}, shift={res.get('center_shift',0):.4f}"
+            f"{name}: pred={res['pred']}, conf={res['conf']:.4f}, Δconf={res.get('conf_delta', 0):.4f}, shift={res.get('center_shift', 0):.4f}"
         )
     summary_text = "\n".join(summary_lines)
     (out_dir / f"sensitivity_{image_path.stem}.txt").write_text(summary_text)
@@ -351,25 +358,38 @@ def run_independent_experiment(model, class_names, out_dir, images_per_class=5):
     rows = []
 
     noise_levels = [0.02, 0.05, 0.1]
-    crops = {"center_crop": lambda im: center_crop(im, 0.8), "random_crop": lambda im: random_crop(im, 0.8)}
+    crops = {
+        "center_crop": lambda im: center_crop(im, 0.8),
+        "random_crop": lambda im: random_crop(im, 0.8),
+    }
 
-    def process_transform(image_rel, pil_img, transform_name, orig_conf, orig_heat, orig_center, class_name):
+    def process_transform(
+        image_rel,
+        pil_img,
+        transform_name,
+        orig_conf,
+        orig_heat,
+        orig_center,
+        class_name,
+    ):
         t = pil_to_model_tensor(pil_img)
         pred, conf = predict(model, t, class_names)
         heat = create_heatmap(model, t, GradCAM)
         center = heatmap_center_of_mass(heat)
         dist = math.hypot(center[0] - orig_center[0], center[1] - orig_center[1])
         iou = compute_iou_from_heatmaps(orig_heat, heat)
-        rows.append({
-            "image": image_rel,
-            "class": class_name,
-            "transform": transform_name,
-            "pred": pred,
-            "conf": conf,
-            "conf_delta": conf - orig_conf,
-            "center_shift": dist,
-            "cam_iou": iou,
-        })
+        rows.append(
+            {
+                "image": image_rel,
+                "class": class_name,
+                "transform": transform_name,
+                "pred": pred,
+                "conf": conf,
+                "conf_delta": conf - orig_conf,
+                "center_shift": dist,
+                "cam_iou": iou,
+            }
+        )
 
     for class_name, paths in grouped.items():
         selected = list(paths)[:images_per_class]
@@ -384,29 +404,71 @@ def run_independent_experiment(model, class_names, out_dir, images_per_class=5):
             orig_center = heatmap_center_of_mass(orig_heat)
 
             # record original row
-            rows.append({
-                "image": image_rel,
-                "class": class_name,
-                "transform": "original",
-                "pred": orig_pred,
-                "conf": orig_conf,
-                "conf_delta": 0.0,
-                "center_shift": 0.0,
-                "cam_iou": 1.0,
-            })
+            rows.append(
+                {
+                    "image": image_rel,
+                    "class": class_name,
+                    "transform": "original",
+                    "pred": orig_pred,
+                    "conf": orig_conf,
+                    "conf_delta": 0.0,
+                    "center_shift": 0.0,
+                    "cam_iou": 1.0,
+                }
+            )
 
             # brightness
-            process_transform(image_rel, ImageEnhance.Brightness(pil).enhance(1.5), "bright_up", orig_conf, orig_heat, orig_center, class_name)
-            process_transform(image_rel, ImageEnhance.Brightness(pil).enhance(0.6), "bright_down", orig_conf, orig_heat, orig_center, class_name)
+            process_transform(
+                image_rel,
+                ImageEnhance.Brightness(pil).enhance(1.5),
+                "bright_up",
+                orig_conf,
+                orig_heat,
+                orig_center,
+                class_name,
+            )
+            process_transform(
+                image_rel,
+                ImageEnhance.Brightness(pil).enhance(0.6),
+                "bright_down",
+                orig_conf,
+                orig_heat,
+                orig_center,
+                class_name,
+            )
 
             # flip
-            process_transform(image_rel, pil.transpose(Image.FLIP_LEFT_RIGHT), "hflip", orig_conf, orig_heat, orig_center, class_name)
+            process_transform(
+                image_rel,
+                pil.transpose(Image.FLIP_LEFT_RIGHT),
+                "hflip",
+                orig_conf,
+                orig_heat,
+                orig_center,
+                class_name,
+            )
 
             # rotate
-            process_transform(image_rel, pil.rotate(90, expand=True), "rotate90", orig_conf, orig_heat, orig_center, class_name)
+            process_transform(
+                image_rel,
+                pil.rotate(90, expand=True),
+                "rotate90",
+                orig_conf,
+                orig_heat,
+                orig_center,
+                class_name,
+            )
 
             # gaussian blur
-            process_transform(image_rel, pil.filter(ImageFilter.GaussianBlur(radius=2)), "gaussian_blur", orig_conf, orig_heat, orig_center, class_name)
+            process_transform(
+                image_rel,
+                pil.filter(ImageFilter.GaussianBlur(radius=2)),
+                "gaussian_blur",
+                orig_conf,
+                orig_heat,
+                orig_center,
+                class_name,
+            )
 
             # noise levels
             arr = np.asarray(pil).astype(np.float32) / 255.0
@@ -414,16 +476,41 @@ def run_independent_experiment(model, class_names, out_dir, images_per_class=5):
                 noise = np.random.normal(0, nl, size=arr.shape).astype(np.float32)
                 noisy = np.clip(arr + noise, 0.0, 1.0)
                 noisy_img = Image.fromarray((noisy * 255).astype(np.uint8))
-                process_transform(image_rel, noisy_img, f"noise_{nl}", orig_conf, orig_heat, orig_center, class_name)
+                process_transform(
+                    image_rel,
+                    noisy_img,
+                    f"noise_{nl}",
+                    orig_conf,
+                    orig_heat,
+                    orig_center,
+                    class_name,
+                )
 
             # crops
             for cname, func in crops.items():
                 cimg = func(pil)
-                process_transform(image_rel, cimg, cname, orig_conf, orig_heat, orig_center, class_name)
+                process_transform(
+                    image_rel,
+                    cimg,
+                    cname,
+                    orig_conf,
+                    orig_heat,
+                    orig_center,
+                    class_name,
+                )
 
     # write CSV
     out_csv = out_dir / "experiment_summary.csv"
-    keys = ["image", "class", "transform", "pred", "conf", "conf_delta", "center_shift", "cam_iou"]
+    keys = [
+        "image",
+        "class",
+        "transform",
+        "pred",
+        "conf",
+        "conf_delta",
+        "center_shift",
+        "cam_iou",
+    ]
     with open(out_csv, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=keys)
         writer.writeheader()
@@ -449,7 +536,6 @@ def run_independent_experiment(model, class_names, out_dir, images_per_class=5):
     plt.savefig(out_dir / "box_center_shift.png")
 
     print(f"Experiment saved to {out_csv} and summary plots saved.")
-
 
 
 def main():
@@ -482,7 +568,9 @@ def main():
 
     # Independent Task 3: run the aggregated experiment across several images per class
     print("Running Independent Task 3...")
-    run_independent_experiment(model, class_names, GRADCAM_EXAMPLES_DIR, images_per_class=3)
+    run_independent_experiment(
+        model, class_names, GRADCAM_EXAMPLES_DIR, images_per_class=3
+    )
 
     comparison_image_path = get_image_path(TEST_DIR, f_num=0, img_num=0)
     comparison_image, comparison_tensor = load_image(comparison_image_path)
