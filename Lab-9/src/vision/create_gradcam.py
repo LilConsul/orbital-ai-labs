@@ -8,7 +8,7 @@ from torch import nn
 from torchvision import models, transforms
 
 MODEL_PATH = MODELS_DIR / "resnet18_transfer.pt"
-CLASS_NAMES_PATH = MODELS_DIR / "resnet18_transfer_classes.txt"
+CLASS_NAMES_PATH = MODELS_DIR / "resnet18_transfer.txt"
 OUTPUT_PATH = REPORT_DIR / "gradcam_example.png"
 
 

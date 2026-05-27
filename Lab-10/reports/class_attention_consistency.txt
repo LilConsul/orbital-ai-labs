@@ -1,0 +1,11 @@
+• Does the model consistently focus on similar regions?
+The model does not consistently focus on exactly the same regions, especially for the forest class. Across the forest examples, the attention shifts quite a bit between different areas of the image. Sometimes it focuses on the left side, sometimes on the right, and sometimes more centrally. This suggests that the model relies on general texture rather than a specific, repeatable pattern
+
+• Does attention vary significantly?
+The attention varies significantly, particularly for forest images. The Grad-CAM maps show quite different shapes and positions of activation, even though all images belong to the same class. In contrast, the variation is smaller for the other classes, where attention tends to be more concentrated and consistent.
+
+• Which class produces the most stable attention patterns?
+The residential class produces the most stable attention patterns. Across the residential images, the model repeatedly focuses on compact, well-defined regions that correspond to structured patterns such as buildings or roads. The attention is usually localized and consistent between samples, which also matches the high confidence scores.
+
+• Which class appears more difficult?
+The forest class appears more difficult for the model. The attention in forest images is much more diffuse and inconsistent, and the confidence scores are slightly lower on average. This suggests that the model struggles to find clear, distinctive features and instead relies on broader, less precise texture information

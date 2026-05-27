@@ -1,0 +1,31 @@
+• Do all CAM methods highlight the same image regions?
+Not exactly. All methods generally focus on the same overall area (right side of the image), which likely contains the important forest-related texture. However, they differ in how much of the region they cover and how concentrated the attention is. Some methods highlight a broader region, while others focus more narrowly.
+
+• Which method produces the sharpest visualization?
+EigenCAM produces the sharpest visualization.
+It has very clear and concentrated hotspots (bright red areas), making it easy to see exactly where the model is focusing
+
+• Which method produces the smoothest visualization?
+Grad-CAM is the smoothest.
+Its heatmap transitions gradually from red to blue, without sharp boundaries, giving a more “blurry” but stable view of attention
+
+• Which method appears easiest to interpret?
+LayerCAM is probably the easiest to interpret.
+It balances both:
+
+clear activation regions (like EigenCAM)
+and smooth transitions (like Grad-CAM)
+
+So it gives a good sense of where and how strongly the model is focusing.
+
+• Do any methods produce suspicious or unexpected attention?
+Yes, slightly.
+
+Some methods (especially Grad-CAM and HiResCAM) highlight a large portion of the image, including less relevant areas.
+This can make it unclear whether the model is truly focusing on meaningful features or just spreading attention widely.
+
+• What does this suggest about relying on only one XAI method?
+It suggests that relying on just one method can be misleading.
+Different CAM methods:
+    highlight different aspects of the model’s reasoning
+    may exaggerate or hide certain features

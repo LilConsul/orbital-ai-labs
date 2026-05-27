@@ -6,8 +6,8 @@ from torch import nn
 from torchvision import models, transforms
 
 MODEL_PATH = MODELS_DIR / "resnet18_transfer.pt"
-CLASSES_PATH = MODELS_DIR / "resnet18_transfer_classes.txt"
-CLASS_NAMES_PATH = MODELS_DIR / "resnet18_transfer_classes.txt"
+CLASSES_PATH = MODELS_DIR / "resnet18_transfer.txt"
+CLASS_NAMES_PATH = MODELS_DIR / "resnet18_transfer.txt"
 OUTPUT_PATH = REPORT_DIR / "transfer_predictions_gallery.png"
 IMAGES_PER_CLASS = 3
 

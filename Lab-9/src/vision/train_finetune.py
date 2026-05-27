@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader
 from torchvision import models, transforms
 
 MODEL_PATH = MODELS_DIR / "resnet18_finetuned.pt"
-CLASS_NAMES_PATH = MODELS_DIR / "resnet18_finetuned_classes.txt"
+CLASS_NAMES_PATH = MODELS_DIR / "resnet18_finetuned.txt"
 REPORT_PATH = REPORT_DIR / "fine_tuning_report.txt"
 CONFUSION_MATRIX_PATH = REPORT_DIR / "fine_tuning_confusion_matrix.png"
 

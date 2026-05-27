@@ -75,7 +75,7 @@ def prepare_dataset():
             for index, input_path in enumerate(files):
                 output_filename = f"{output_class}_{index:04d}.jpg"
                 output_path = (
-                        PROCESSED_DIR / split_name / output_class / output_filename
+                    PROCESSED_DIR / split_name / output_class / output_filename
                 )
                 process_single_image(input_path, output_path)
 

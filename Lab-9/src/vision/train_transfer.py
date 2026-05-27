@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader
 from torchvision import models, transforms
 
 MODEL_PATH = MODELS_DIR / "resnet18_transfer.pt"
-CLASS_NAMES_PATH = MODELS_DIR / "resnet18_transfer_classes.txt"
+CLASS_NAMES_PATH = MODELS_DIR / "resnet18_transfer.txt"
 REPORT_PATH = REPORT_DIR / "resnet18_transfer.txt"
 CONFUSION_MATRIX_PATH = REPORT_DIR / "transfer_confusion_matrix.png"
 

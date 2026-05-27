@@ -1,0 +1,25 @@
+• Do both methods highlight similar regions?
+Both methods generally highlight similar regions, although not in exactly the same way. In this case, both Grad-CAM and occlusion sensitivity point to the same overall area of the image, especially around the more distinctive vertical structure on the right side. However, Grad-CAM presents this as a smooth and continuous region, while occlusion divides the attention into more discrete patches, so the agreement is more about the general location than the exact shape
+
+• Which explanation appears more localized?
+The occlusion sensitivity method appears more localized. The visualization is divided into small squares, and each square clearly shows how important that exact region is for the prediction. This makes it easier to identify precise areas that influence the model, compared to Grad-CAM, which tends to blur attention across a larger region.
+
+• Which explanation appears easier to interpret?
+Grad-CAM appears easier to interpret. The smooth heatmap and gradual color transitions make it more intuitive to understand where the model is focusing. The output looks more natural and visually aligned with the image, while the blocky structure of occlusion sensitivity requires more effort to interpret
+
+• Did both methods identify the river region?
+Both methods do identify a similar important feature in the image (I used forest as example). The attention is drawn toward the right side, where there is a stronger contrast and a more distinctive structure. This suggests that the model is focusing on visual patterns such as edges or texture differences rather than explicit semantic objects like a river.
+
+• What happens for unknown inputs?
+For unknown inputs, both methods still produce explanations even when the input does not contain meaningful information. As seen in earlier examples, the model can generate attention maps that look structured, even when the input is random noise. This shows that the explanations reflect the model’s internal behavior but do not guarantee that the input itself is meaningful
+
+• Can one explanation method completely replace another?
+One explanation method cannot completely replace another. Each method highlights different aspects of the model’s reasoning. Grad-CAM provides a more global and intuitive overview, while occlusion sensitivity offers more precise, localized insights. Relying on only one method can be misleading, since it may hide important details or give a false sense of understanding.
+
+Grad-CAM:
+Where does the model appear to focus?
+The model appears to focus mainly on the left-central part of the image, where the heatmap shows a large, continuous red and yellow region. This suggests that the model is relying on broader texture patterns rather than precise structures. The attention gradually fades toward the edges, meaning the model considers most of that region important rather than a single specific point.
+
+Occlusion:
+What information is truly necessary for the prediction?
+Occlusion shows that the most important information is concentrated in specific patches rather than the entire region. When certain small areas are masked, especially around the central and right-side structures, the prediction drops more significantly. This indicates that only some localized parts of the image are truly necessary for the prediction, even though Grad-CAM suggests a wider area is important.
