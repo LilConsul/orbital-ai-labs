@@ -1,0 +1,18 @@
+SEMANTIC SEGMENTATION REPORT
+============================
+
+Model: Small U-Net
+Dataset: synthetic EO segmentation dataset
+Classes: 4
+Epochs: 10
+Learning rate: 0.001
+
+EVALUATION METRICS
+------------------
+Overall pixel accuracy: 0.9560
+
+Class-wise pixel accuracy:
+  • background  : 0.9782
+  • vegetation  : 0.9212
+  • water       : 0.7705
+  • urban       : 0.9766

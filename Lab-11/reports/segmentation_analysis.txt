@@ -1,0 +1,74 @@
+SEGMENTATION ANALYSIS
+=====================
+Pixel accuracy: 0.9954
+Visual observations: Very good performance overall, with clear distinctions between classes. However, some boundary areas show misclassifications, and small objects are occasionally missed or misclassified.
+Most accurate class: water and ground
+Most difficult class: urban areas are most difficult
+Boundary errors: urban areas seems to have soft corners, which may lead to misclassifications at the edges.
+Small object errors: small urban features are sometimes misclassified as ground or water, likely due to their size and similarity in appearance.
+Engineering conclusions: The model performs really well with accuracy > 99%, but further improvements could be made by focusing on boundary refinement and small object detection, possibly through data augmentation or model architecture adjustments.
+
+GENERAL OBSERVATIONS
+=====================
+• Which classes were segmented correctly: water and ground were segmented correctly, while urban areas were more challenging.
+
+• Which classes caused the largest errors: urban areas caused the largest errors, likely due to their complex and varied appearance.
+
+• Whether object boundaries were preserved: boundaries were generally preserved, but some misclassifications occurred at the edges, particularly for urban areas.
+
+• Whether small structures were detected: small structures, especially in urban areas, were sometimes missed or misclassified, indicating a need for improved detection of small objects.
+
+• Whether the model confused similar regions: there were no confusions, but only some slight misclassifications between small urban features and ground or water (soft corners).
+
+• What limitations of the current approach can be observed: The model may struggle with complex and varied appearances of urban areas, leading to misclassifications. Additionally, small objects may not be detected effectively, suggesting a need for improved feature extraction or data augmentation techniques to enhance the model's ability to capture fine details.
+
+QUESTIONS: INDEPENDENT TASK 1
+=============================
+• Are predictions stable across different scenes?
+Yes, the model shows consistent performance across different scenes, with high pixel accuracy and similar patterns of errors observed in urban areas.
+• Do errors repeat across images?
+Yes, same errors with urban areas and small objects are observed across multiple images, indicating a consistent challenge for the model in these classes.
+• Which structures are segmented most consistently?
+Water and ground are segmented most consistently, with high accuracy and clear distinctions between these classes across different images.
+
+QUESTIONS: INDEPENDENT TASK 2
+=============================
+> Instead of simple shapes (ellipse, rectangle), you introduced irregular polygons, curved rivers, and variable-sized buildings, which forces the model to learn real boundaries instead of memorizing patterns. You also added noise, overlap, and small random objects, which makes edges less clean and increases ambiguity. That combination makes segmentation rely on spatial understanding rather than simple pixel/color cues.
+
+• Did pixel accuracy decrease?
+Yes, pixel accuracy decreased slightly from 0.9954 to 0.9560, indicating that the model's performance has declined, likely due to the increased difficulty of the dataset or changes in the model architecture.
+• Which class became harder?
+Urban areas became harder to segment, as evidenced by the increased errors and misclassifications in this class, likely due to the more complex and varied appearance of urban features in the new dataset.
+• Did small structures become more difficult?
+Yes, small structures became more difficult to detect, with an increase in misclassifications and missed detections, suggesting that the model may struggle with finer details in the new dataset.
+• What does this suggest about real Earth Observation data?
+This suggests that real Earth Observation data, which often contains complex and varied features, may present significant challenges for segmentation models, particularly in accurately classifying urban areas and small structures. It highlights the importance of using diverse and representative training data, as well as potentially incorporating advanced techniques such as data augmentation or more sophisticated model architectures to improve performance on real-world datasets.
+
+QUESTIONS: INDEPENDENT TASK 3
+=============================
+• Which class achieved the best accuracy?
+Background and urban areas achieved the best accuracy, with pixel accuracies of 0.9782 and 0.9766 respectively, indicating that the model performs well in segmenting these classes.
+• Which class achieved the worst accuracy?
+Water achieved the worst accuracy, with a pixel accuracy of 0.7705, suggesting that the model struggles to accurately segment water regions, possibly due to their variability in appearance and similarity to other classes.
+• Is global pixel accuracy misleading?
+Yes, global pixel accuracy can be misleading because it may be dominated by the most prevalent classes in the dataset, masking poor performance on less common classes. For example, if the background class is very large and easy to segment, it can inflate the overall pixel accuracy, even if the model performs poorly on smaller or more complex classes like water or urban areas.
+• Why are small classes often harder to evaluate?
+Small classes are often harder to evaluate because they may be underrepresented in the dataset, leading to fewer training examples and less effective learning. Additionally, small classes may have more complex and varied appearances, making them more difficult for the model to learn and segment accurately. This can result in lower pixel accuracy for these classes, which may not be reflected in the overall pixel accuracy if they constitute a small portion of the total pixels.
+
+QUESTIONS: INDEPENDENT TASK 4
+=============================
+• What does classification output?
+Classification outputs a single label for the entire image, indicating the dominant class or scene type present in the image. It does not provide pixel-level information about the spatial distribution of classes within the image.
+• What does segmentation output?
+Segmentation outputs a pixel-level classification, where each pixel in the image is assigned a class label. This allows for a detailed understanding of the spatial distribution of different classes within the image, enabling tasks such as land-cover mapping and object detection.
+• Which task is more suitable for land-cover mapping?
+Segmentation is more suitable for land-cover mapping because it provides detailed pixel-level information about the spatial distribution of different land-cover classes, allowing for accurate mapping and analysis of land-use patterns. Classification, on the other hand, would only provide a single label for the entire image, which may not capture the complexity and variability of land-cover types present in the scene.
+• Which task is more suitable for quick scene categorization?
+Classification is more suitable for quick scene categorization because it provides a single label for the entire image, allowing for rapid identification of the dominant class or scene type. This can be useful for applications such as image retrieval or large-scale monitoring where a quick overview of the scene is sufficient, without the need for detailed pixel-level information provided by segmentation.
+• Why is segmentation more computationally demanding?
+Segmentation is more computationally demanding because it requires processing each pixel in the image to assign a class label, which involves more complex computations and a larger number of parameters compared to classification, which only needs to output a single label for the entire image. Additionally, segmentation models often require more sophisticated architectures and training techniques to achieve accurate pixel-level predictions, further increasing the computational requirements.
+• How could segmentation support mission operations?
+Segmentation could support mission operations by providing detailed spatial information about the distribution of different classes within the observed area, enabling tasks such as land-cover mapping, change detection, and object identification. This information can be crucial for applications such as disaster response, environmental monitoring, and urban planning, where understanding the spatial context and distribution of features is essential for informed decision-making and effective resource allocation.
+
+==============================================================
+GitHub repository:https://github.com/LilConsul/orbital-ai-labs
